@@ -1,5 +1,8 @@
 package main;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,12 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +49,7 @@ import com.google.api.services.drive.model.FileList;
 public class GoogleAuth {
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 	private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
+	private static final String authForm = "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=751667716532-g4vdk25ai7kibi299pkv1tc5j5l2557t.apps.googleusercontent.com&redirect_uri=http://localhost:8089/Callback&response_type=code&scope=https://www.googleapis.com/auth/drive";
 
 	@RequestMapping("/auth")
 	private static Credential auth(final NetHttpTransport HTTP_TRANSPORT) throws Exception {
@@ -55,16 +63,22 @@ public class GoogleAuth {
 				new LocalServerReceiver.Builder().setPort(8089).build()).authorize("user");
 		System.out.println("credential: " + credential);
 		// return credential;
-		return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver.Builder().setPort(8089).build())
-				.authorize("user");
+		System.out.println("flow: " + flow);
+		//return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver.Builder().setPort(8089).build())
+		//		.authorize("user");
+		//redirectedUrl("https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=751667716532-g4vdk25ai7kibi299pkv1tc5j5l2557t.apps.googleusercontent.com&redirect_uri=http://localhost:8089/Callback&response_type=code&scope=https://www.googleapis.com/auth/drive");
+		return credential;
+		
 	}
 
-	@RequestMapping("/")
-	public static String main(Model model) throws Exception {
+	@RequestMapping("/drive")
+	public static String main(Model model, HttpServletResponse response) throws Exception {
 		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		Drive drive = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, auth(HTTP_TRANSPORT)).setApplicationName("dra6")
 				.build();
-
+		
+		
+		
 		FileList result = drive.files().list().setPageSize(10).setFields("nextPageToken, files(id,name)").execute();
 		List<File> files = result.getFiles();
 		List<String> filesName = new ArrayList<String>();
@@ -78,12 +92,24 @@ public class GoogleAuth {
 				filesName.add(file.getName());
 			}
 		}
-		
+
 		model.addAttribute("lists", files);
 		model.addAttribute("filesName", filesName);
 		System.out.println("Переменная files" + files);
 		System.out.println("filesName: " + filesName);
+		System.out.println("HTTP_TRANSPORT: " + HTTP_TRANSPORT);
+		System.out.println("Drive: " + drive);
 		return "home";
+	}
+	
+	@RequestMapping("/")
+	public static String home(Model model) {
+		return "home";
+	}
+	
+	@RequestMapping("/link")
+	public static String link(Model model) {
+		return "redirect:https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=751667716532-g4vdk25ai7kibi299pkv1tc5j5l2557t.apps.googleusercontent.com&redirect_uri=http://localhost:8089/Callback&response_type=code&scope=https://www.googleapis.com/auth/drive";
 	}
 
 	@RequestMapping("/up")
@@ -93,41 +119,50 @@ public class GoogleAuth {
 		Drive drive = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, auth(HTTP_TRANSPORT)).setApplicationName("dra6")
 				.build();
 		File fileMeta = new File();
-		String fileName = multipartFile.getOriginalFilename().toString();  //Получаем название файла
-		fileMeta.setName(fileName);    //устанавливаем название
+		String fileName = multipartFile.getOriginalFilename().toString(); // Получаем название файла
+		fileMeta.setName(fileName); // устанавливаем название
 		java.io.File tmpFile = java.io.File.createTempFile("UploadFile", ".tmp");
-		
-		
+
 		InputStream in = multipartFile.getInputStream();
 		FileOutputStream fos = new FileOutputStream(tmpFile);
 		IOUtils.copy(in, fos);
 		in.close();
 		fos.close();
 		tmpFile.deleteOnExit();
-		
+
 		FileContent mediaContent = new FileContent(null, tmpFile);
 		File file = drive.files().create(fileMeta, mediaContent).setFields("id").execute();
-		
-		//проверка разных значений
+
+		// проверка разных значений
 		System.out.println("tmpFile: " + tmpFile);
 		System.out.println("file: " + file);
 		System.out.println("fileMeta: " + fileMeta);
 		System.out.println("mediaContent: " + mediaContent);
 		System.out.println("multipartFile: " + multipartFile);
 		System.out.println("fileName: " + fileName);
-		
+
 		model.addAttribute("UploadedFile", file);
 		return "redirect:/";
-		
-		
+
 	}
 
-	@PostMapping("/1")
-	public String SingleUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redir) {
-		Path path = Paths.get(file.getOriginalFilename());
-		System.out.println("File path: " + path);
+	@RequestMapping("/down")
+	public String download(Model model) throws Exception {
+		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+		Drive drive = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, auth(HTTP_TRANSPORT)).setApplicationName("dra6")
+				.build();
+		try {
+			String fileId = "1Zr4aM29VtYURZ61z-3LP2e3mCdM384g0";
+			OutputStream os = new ByteArrayOutputStream();
+			drive.files().get(fileId).executeMediaAndDownloadTo(os);
 
+			// System.out.println("os" + os);
+			System.out.println("file downloaded");
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return "redirect:/";
-	}
 
+	}
 }
