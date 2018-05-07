@@ -9,17 +9,12 @@
 <body>
 	<h1>dra6</h1>
 	<div>
-		<form method="POST" enctype="multipart/form-data" action="/">
-			<p>
+		<form method="POST" enctype="multipart/form-data" action="/up">
 				File uploaded: <input type="file" name="file" />
-			</p>
 			<br> <input type="submit" value="Upload">
 		</form>
 	</div>
-<div>
-<ul>
-<li th:each="file : ${files}"> <a th:href="${file}" th:text="${file }"></a></li>
-</ul>
-</div>
+
+ <a th:href="${UploadedFile}" th:text="${ UploadedFile}">Ссылка на файл</a>
 </body>
 </html>
