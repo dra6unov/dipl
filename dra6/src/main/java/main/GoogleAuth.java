@@ -72,9 +72,13 @@ public class GoogleAuth {
 			System.out.println("Files: ");
 			for (File file : files) {
 				System.out.printf("%s (%s)\n", file.getName(), file.getId());
+				model.addAttribute("fileName", file.getName());
 			}
 		}
-		model.addAttribute("files", files);
+		
+		model.addAttribute("lists", files);
+		//model.addAttribute("files", files);
+		System.out.println("Переменная files" + files);
 		return "home";
 	}
 
