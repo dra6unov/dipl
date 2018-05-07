@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class GoogleAuth {
 
 		FileList result = drive.files().list().setPageSize(10).setFields("nextPageToken, files(id,name)").execute();
 		List<File> files = result.getFiles();
+		List<String> filesName = new ArrayList<String>();
 		if (files == null || files.isEmpty()) {
 			System.out.println("no files found");
 		} else {
@@ -73,12 +75,14 @@ public class GoogleAuth {
 			for (File file : files) {
 				System.out.printf("%s (%s)\n", file.getName(), file.getId());
 				model.addAttribute("fileName", file.getName());
+				filesName.add(file.getName());
 			}
 		}
 		
 		model.addAttribute("lists", files);
-		//model.addAttribute("files", files);
+		model.addAttribute("filesName", filesName);
 		System.out.println("Переменная files" + files);
+		System.out.println("filesName: " + filesName);
 		return "home";
 	}
 

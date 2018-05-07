@@ -18,11 +18,16 @@
 
 	<a th:href="${UploadedFile}" th:text="${ UploadedFile}">Ссылка на
 		файл</a>
-	<p>${fileName}</p>
 
 	<ul>
 		<c:forEach items="${lists }" var="lists">
 			<li>${lists}</li>
+		</c:forEach>
+	</ul>
+	
+		<ul>
+		<c:forEach items="${filesName }" var="filesName">
+			<li>${filesName}</li>
 		</c:forEach>
 	</ul>
 </body>
