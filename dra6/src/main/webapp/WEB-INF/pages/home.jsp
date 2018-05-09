@@ -9,18 +9,20 @@
 </head>
 <body>
 	<h1>dra6</h1>
+	<form method="GET" action="/drive">
+		<input type="Button" value="drive">
+	</form>
+	
 	<form method="POST" action="/link">
 		<input type="submit" value="Гугыл">
 	</form>
+	
 	<div>
 		<form method="POST" enctype="multipart/form-data" action="/up">
 			File uploaded: <input type="file" name="file" /> <br> <input
 				type="submit" value="Upload">
 		</form>
 	</div>
-
-	<a th:href="${UploadedFile}" th:text="${ UploadedFile}">Ссылка на
-		файл</a>
 
 	<ul>
 		<c:forEach items="${lists }" var="lists">
