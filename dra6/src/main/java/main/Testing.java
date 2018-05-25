@@ -68,16 +68,9 @@ public class Testing {
 	}*/
 	
 	@RequestMapping("/t")
-	public  void tets(final NetHttpTransport HTTP_TRANSPORT, HttpServletResponse resp) throws Exception {
-		System.out.println("flow: " + flow(HTTP_TRANSPORT));
-		System.out.println("auth: " + auth(HTTP_TRANSPORT));
-		final GoogleAuthorizationCodeRequestUrl url = flow(HTTP_TRANSPORT).newAuthorizationUrl();
-		
-		//auth(HTTP_TRANSPORT);
-		String uri = url.setRedirectUri("http://localhost:8081").build();
-		//System.exit(1);
-		System.out.println("uri: " + uri);
-		resp.sendRedirect(uri);
+	public  String tets(final NetHttpTransport HTTP_TRANSPORT, HttpServletResponse resp) throws Exception {
+		Credential credential = auth(HTTP_TRANSPORT);
+		return "redirect:https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=751667716532-g4vdk25ai7kibi299pkv1tc5j5l2557t.apps.googleusercontent.com&redirect_uri=http://localhost:8089/Callback&response_type=code&scope=https://www.googleapis.com/auth/drive";
 		
 		
 		//Credential credential = auth(HTTP_TRANSPORT);
