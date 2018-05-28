@@ -199,7 +199,7 @@ public class GoogleAuth {
 		FileContent mediaContent = new FileContent(null, tmpFile);
 		File file = drive.files().create(fileMeta, mediaContent).setFields("id").execute();
 		
-		User_file user_file = new User_file(fileName, )
+		//User_file user_file = new User_file(fileName, )
 		// User_file user_file = new User_file()
 
 		// проверка разных значений
@@ -212,7 +212,7 @@ public class GoogleAuth {
 		System.out.println("file id: " + file.getId());
 
 		model.addAttribute("UploadedFile", file);
-		return "redirect:/";
+		return "redirect:drive";
 
 	}
 
