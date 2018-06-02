@@ -210,6 +210,7 @@ public class GoogleAuth {
 		System.out.println("multipartFile: " + multipartFile);
 		System.out.println("fileName: " + fileName);
 		System.out.println("file id: " + file.getId());
+		System.out.println("тут что-то есть");
 
 		model.addAttribute("UploadedFile", file);
 		return "redirect:drive";
