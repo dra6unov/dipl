@@ -1,6 +1,7 @@
 package main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class RegistrationController {
 			@RequestParam String email,
 			Model model) {
 		Long group = (long) 1;
-		Auth auth = new Auth(login, pass, null);
+		Auth auth = new Auth(login, pass, null, null);
 		authRepo.save(auth);
 		User_inf inf = new User_inf(first_name, last_name, auth.getId(), group, email);
 		infRepo.save(inf);
@@ -71,8 +72,16 @@ public class RegistrationController {
 				//response.sendRedirect("/reg");
 			}
 		} else {
+			List<Auth> id = authRepo.findByLogin(login);
+			Long userId = id.get(0).getId();
+			System.out.println("test: " + userId);
+			
 			HttpSession session = request.getSession();
 			session.setAttribute("user", login);
+			session.setAttribute("user_id", userId);
+			
+			System.out.println("Проверка id сессии: " + session.getAttribute("user_id").toString());
+			
 			model.addAttribute("aut", login);
 			model.addAttribute("username", session.getAttribute("user").toString());
 			//response.sendRedirect("/");

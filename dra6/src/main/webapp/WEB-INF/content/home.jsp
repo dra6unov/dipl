@@ -10,47 +10,40 @@
 <body>
 	<h1>dra6</h1>
 	<h2>Добро пожаловать, ${username}</h2>
-	
+
 	<div>
-	<form method="POST" action="/gg">
-	<input type="text" name="usergroup" placeholder="введите группу">
-	<button type="submit">Добавить группу</button>
-	</form>
+		<form method="POST" action="/gg">
+			<input type="text" name="usergroup" placeholder="введите группу">
+			<button type="submit">Добавить группу</button>
+		</form>
 	</div>
 	<br>
-	
+
 	<label>${mes}</label>
 	<br>
-	
-	
-	
+
+
+
 	<div>
-	<form action="POST">
-	<input type="text" name="login" placeholder="Введите логин">
-	<input type="text" name="pass" placeholder="Введите пароль">
-	<button type="submit">Добавить</button>
-	</form>
+		<form action="POST">
+			<input type="text" name="login" placeholder="Введите логин">
+			<input type="text" name="pass" placeholder="Введите пароль">
+			<button type="submit">Добавить</button>
+		</form>
 	</div>
 	<br>
 	<br>
-	
-	
+
+
 	<br>
 	<br>
 	<form method="GET" action="/drive">
 		<input type="Button" value="drive">
 	</form>
-	
+
 	<form method="POST" action="/link">
 		<input type="submit" value="Гугыл">
 	</form>
-	
-	<div>
-		<form method="POST" enctype="multipart/form-data" action="/up">
-			Загрузка файла(ов): <input type="file" name="file" /> <br> <input
-				type="submit" value="Upload">
-		</form>
-	</div>
 
 	<ul>
 		<c:forEach items="${lists }" var="lists">
@@ -63,17 +56,35 @@
 			<li>${filesName}</li>
 		</c:forEach>
 	</ul>
-	
+
 	<br>
 	<br>
 	<div>
-	<label>${aut}</label>
+		<label>${aut}</label>
 	</div>
-	
+
 	<div>
-	<form method="get" action="/logout">
-	<button  type="submit">Выйти из профиля</button>
-	</form>
+		<form method="get" action="/logout">
+			<button type="submit">Выйти из профиля</button>
+		</form>
+	</div>
+
+	<div>
+		<form method="POST" enctype="multipart/form-data"
+			action="/upload">
+			Загрузка файла(ов): <input type="file" name="file" /> <br> <input
+				type="submit" value="Upload">
+			<div class="form-check">
+				<input type="checkbox" class="form-check-input" id="GD" name="GD">
+				<label class="form-check-label" for="GD">Google Drive</label>
+			</div>
+			<div class="form-check">
+				<input type="checkbox" class="form-check-input" id="DP" name="DP">
+				<label class="form-check-label" for="DP">Dropbox</label>
+
+			</div>
+		</form>
+		<label>${upload_res }</label>
 	</div>
 </body>
 </html>

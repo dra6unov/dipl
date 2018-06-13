@@ -80,49 +80,7 @@ public class GoogleAuth {
 	@Autowired
 	private User_groupRepo groupRepo;
 
-	@RequestMapping("/auth")
-	private static Credential auth(final NetHttpTransport HTTP_TRANSPORT) throws Exception {
-		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-				new InputStreamReader(GoogleAuth.class.getResourceAsStream("/client_secret.json")));
-
-		flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-				.setDataStoreFactory(new FileDataStoreFactory(new java.io.File("credentials"))).setAccessType("offline")
-				.build();
-		final GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
-		Credential credential = new AuthorizationCodeInstalledApp(flow,
-				new LocalServerReceiver.Builder().setPort(8089).build()).authorize("user");
-		System.out.println("credential: " + credential);
-
-		// return credential;
-		System.out.println("flow: " + flow);
-		System.out.println("url: " + url.setRedirectUri("http://localhost:8081").build()); // строка для авторизации
-																							// диска и возврат на
-																							// главную
-		// return new AuthorizationCodeInstalledApp(flow, new
-		// LocalServerReceiver.Builder().setPort(8089).build())
-		// .authorize("user");
-		// redirectedUrl("https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=751667716532-g4vdk25ai7kibi299pkv1tc5j5l2557t.apps.googleusercontent.com&redirect_uri=http://localhost:8089/Callback&response_type=code&scope=https://www.googleapis.com/auth/drive");
-		return credential;
-
-	}
-
-	/*
-	 * private static Credential auth(final NetHttpTransport HTTP_TRANSPORT) throws
-	 * Exception { GoogleClientSecrets clientSecrets =
-	 * GoogleClientSecrets.load(JSON_FACTORY, new
-	 * InputStreamReader(GoogleAuth.class.getResourceAsStream("/client_secret.json")
-	 * )); flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT,
-	 * JSON_FACTORY, clientSecrets, SCOPES).setDataStoreFactory(new
-	 * FileDataStoreFactory(new java.io.File("credentials")))
-	 * .setAccessType("offline").build(); Credential credential = new
-	 * AuthorizationCodeInstalledApp(flow, new
-	 * LocalServerReceiver.Builder().setPort(8089).build()).authorize("user"); final
-	 * GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
-	 * 
-	 * return credential; }
-	 */
-
-	@RequestMapping("/drive")
+/*	@RequestMapping("/drive")
 	public static String main(Model model, HttpServletResponse response) throws Exception {
 		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		Drive drive = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, auth(HTTP_TRANSPORT)).setApplicationName("dra6")
@@ -149,7 +107,7 @@ public class GoogleAuth {
 		System.out.println("HTTP_TRANSPORT: " + HTTP_TRANSPORT);
 		System.out.println("Drive: " + drive);
 		return "home";
-	}
+	}*/
 
 	@RequestMapping("/")
 	public static String home(HttpServletResponse response, HttpServletRequest request, Model model) {
@@ -164,6 +122,7 @@ public class GoogleAuth {
 			System.out.println("name: " + session.getAttribute("user"));
 			return "home";
 		}
+		//return "home";
 	}
 
 	/*
@@ -175,11 +134,11 @@ public class GoogleAuth {
 	 * //return "home" //return //return auth(HTTP_TRANSPORT); }
 	 */
 	
-	@Autowired
+/*	@Autowired
 	private User_infRepo infRepo;
 	
-	@RequestMapping("/up")
-	public static String upload(@RequestParam("file") MultipartFile multipartFile, Model model) throws Exception {
+	//@RequestMapping("/up")
+	public static void upload(@RequestParam("file") MultipartFile multipartFile, Model model) throws Exception {
 		// Path path = Paths.get(filepath.getOriginalFilename());
 		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		Drive drive = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, auth(HTTP_TRANSPORT)).setApplicationName("dra6")
@@ -213,7 +172,7 @@ public class GoogleAuth {
 		System.out.println("тут что-то есть");
 
 		model.addAttribute("UploadedFile", file);
-		return "redirect:drive";
+		//return "redirect:drive";
 
 	}
 
@@ -278,6 +237,6 @@ public class GoogleAuth {
 		inputStream.close();
 		out.close();
 
-	}
+	}*/
 
 }

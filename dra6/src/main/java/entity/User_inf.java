@@ -1,9 +1,14 @@
 package entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class User_inf {
@@ -15,6 +20,9 @@ public class User_inf {
 	private Long auth_id;
 	private Long group_id;
 	private String email;
+	
+	@OneToMany(mappedBy="user_inf")
+	private List<User_file> files = new ArrayList<User_file>();
 	
 	public User_inf() {
 	}

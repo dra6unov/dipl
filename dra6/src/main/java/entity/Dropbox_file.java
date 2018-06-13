@@ -1,7 +1,10 @@
 package entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 public class Dropbox_file {
@@ -10,13 +13,21 @@ public class Dropbox_file {
 	private Long id;
 	private String file_path;
 	
+	@OneToOne(cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+	private User_file user_file;
+	
 	public Dropbox_file() {
 	}
+	
+	
 
 	public Dropbox_file(Long id, String file_path) {
 		this.id = id;
 		this.file_path = file_path;
 	}
+
+
 
 	public Long getId() {
 		return id;
