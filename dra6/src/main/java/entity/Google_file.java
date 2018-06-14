@@ -1,6 +1,7 @@
 package entity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -10,7 +11,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 public class Google_file {
 	@Id
 	private Long id;
-	private String file_id;
+	@Column(name="file_id")
+	private String file;
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
@@ -20,12 +22,26 @@ public class Google_file {
 		super();
 	}
 	
+	
+
+
+	public User_file getUser_file() {
+		return user_file;
+	}
+
+
+
+
+	public void setUser_file(User_file user_file) {
+		this.user_file = user_file;
+	}
+
 
 
 
 	public Google_file(Long id, String file_id) {
 		this.id = id;
-		this.file_id = file_id;
+		this.file = file_id;
 	}
 
 
@@ -38,16 +54,16 @@ public class Google_file {
 	}
 
 	public String getFile_id() {
-		return file_id;
+		return file;
 	}
 
 	public void setFile_id(String file_id) {
-		this.file_id = file_id;
+		this.file = file_id;
 	}
 
 	@Override
 	public String toString() {
-		return "Google_file [id=" + id + ", file_id=" + file_id + "]";
+		return "Google_file [id=" + id + ", file_id=" + file + "]";
 	}
 
 }

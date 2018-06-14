@@ -1,8 +1,12 @@
 package dropBox;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,11 +23,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dropbox.core.*;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.UploadErrorException;
+
+import entity.Auth;
+import entity.Dropbox_file;
+import repos.AuthRepo;
+import repos.Dropbox_fileRepo;
 
 @Controller
 @RequestMapping("/dropbox/*")
@@ -32,6 +44,12 @@ public class DropBoxMain {
 	
 	@Autowired
 	DropBoxService dropBoxService;
+	
+	@Autowired
+	AuthRepo authRepo;
+	
+	@Autowired
+	Dropbox_fileRepo dropboxRepo;
 	
 	@Value("${dropbox.app.sessionstore.key}")
     private String sessionStoreKey;
@@ -68,25 +86,30 @@ public class DropBoxMain {
 		dropBoxService.uploadDropbox(file, session);
 	}
 	
-	@RequestMapping("/test")
-	public String checkboxValue(
-			@RequestParam(value="GD", required=false) boolean GDValue,
-			@RequestParam(value="DP", required=false)boolean DPValue,
-			@RequestParam("file") MultipartFile file, 
-			HttpSession session,
-			Model model) throws UploadErrorException, IOException, DbxException{
-		if(DPValue==true) {
-		dropBoxService.uploadDropbox(file, session);
-		System.out.println("GD: " + GDValue);
-		System.out.println("DP: " + DPValue);
-		return "redirect:/";
-		}
-		else {
-			model.addAttribute("text", "Не выбран дропбокс АУЕ фарту масти");
-			System.out.println("GD: " + GDValue);
-			System.out.println("DP: " + DPValue);
-			return "home";
-		}
+	@RequestMapping(value="/download")
+	@ResponseBody
+	public void downloadDropbox(@RequestParam(value="id") Long id, HttpSession session) throws DbxException, IOException {
+		DbxSessionStore dbxSessionStore = new DbxStandardSessionStore(session, sessionStoreKey);
+		DbxRequestConfig config = new DbxRequestConfig("dra6", Locale.getDefault().toString());
+		
+		Optional<Auth> data = authRepo.findById((Long) session.getAttribute("user_id"));
+		String home = System.getProperty("user.home");
+		String accessToken = data.get().getDropbox_token();
+		
+		LOG.info("accessToken from uploadDropbox: " + accessToken);
+		
+		Long fileId = id;
+		DbxClientV2 client = new DbxClientV2(config, accessToken);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		Optional<Dropbox_file> dropbox = dropboxRepo.findById(fileId);
+		
+		java.io.File file = new java.io.File(home +java.io.File.separator + "Downloads"+java.io.File.separator+dropbox.get().getUser_file().getFile_name());
+		OutputStream outputStream = new FileOutputStream(home +java.io.File.separator + "Downloads"+java.io.File.separator+dropbox.get().getUser_file().getFile_name());
+		FileMetadata metadata = client.files().downloadBuilder(dropbox.get().getFile_path()).download(outputStream);
+		
+		outputStream.close();
+		
 		
 	}
+
 }

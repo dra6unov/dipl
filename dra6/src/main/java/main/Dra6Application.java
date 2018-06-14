@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-//@EnableAutoConfiguration
+@EnableAutoConfiguration
 @SpringBootApplication
 @ComponentScan(basePackages = {"main","googleDrive","dropBox","repos"})
 @EntityScan("entity")

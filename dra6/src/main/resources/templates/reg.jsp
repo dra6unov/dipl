@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html >
+<html xmlns:th="http://www.thymeleaf.org" >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
@@ -22,8 +22,8 @@
 	%>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-8 back"></div>
-			<div class="col-4">
+			<div class="col-6 back"></div>
+			<div class="col-6">
 				<div>
 					<h2>Регистрация</h2>
 					<form method="post" action="/reg">

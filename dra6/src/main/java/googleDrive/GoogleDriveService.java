@@ -1,9 +1,13 @@
 package googleDrive;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +50,7 @@ import com.google.api.services.drive.model.FileList;
 import dropBox.DropBoxService;
 import entity.Auth;
 import entity.Google_file;
+import main.CustomProgressListener;
 import repos.AuthRepo;
 import repos.Google_fileRepo;
 
@@ -70,7 +75,10 @@ public class GoogleDriveService {
 	@Value("${google.app.id}")
 	private String appId;
 	
-	private GoogleAuthorizationCodeFlow googleFlow(NetHttpTransport httpTransport) throws IOException {
+	@Autowired
+	CustomProgressListener customProgressListener;
+	
+	public GoogleAuthorizationCodeFlow googleFlow(NetHttpTransport httpTransport) throws IOException {
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(GoogleDriveService.class.getResourceAsStream("/client_secret.json")));
 		GoogleAuthorizationCodeFlow flow;
 		flow= new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
@@ -131,6 +139,41 @@ public class GoogleDriveService {
 		Long id = (Long) session.getAttribute("file_id");
 		Google_file google_file = new Google_file(id,file_upl.getId());
 		googleRepo.save(google_file);
+		
+	}
+	
+	public void googleDownload(NetHttpTransport httpTransport, HttpSession session, Long id, HttpServletResponse response) throws IOException {
+		Credential cred = refreshAccessToken(httpTransport, session);
+		Drive drive = new Drive.Builder(httpTransport, JSON_FACTORY, cred).setApplicationName("dra6").build();
+		
+		Long fileId = id;
+		Optional<Google_file> google = googleRepo.findById(fileId);
+		System.out.println("google: " + google);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		java.io.File file = new java.io.File(google.get().getUser_file().getFile_name());
+		drive.files().get(google.get().getFile_id()).executeMediaAndDownloadTo(baos);
+		FileOutputStream fop;
+		fop = new FileOutputStream(file);
+		fop.write(baos.toByteArray());
+		fop.flush();
+		fop.close();
+		file.deleteOnExit();
+		
+		response.setContentType("application/octet-stream");
+		response.setContentLength((int) file.length());
+		response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", google.get().getUser_file().getFile_name()));
+		OutputStream out = response.getOutputStream();
+		FileInputStream inputStream = new FileInputStream(file);
+		byte[] buffer = new byte[4096];
+		int length;
+		while ((length = inputStream.read(buffer)) > 0) {
+			out.write(buffer, 0, length);
+		}
+		out.flush();
+		inputStream.close();
+		out.close();
+
 		
 	}
 	

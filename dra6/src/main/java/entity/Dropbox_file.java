@@ -29,6 +29,18 @@ public class Dropbox_file {
 
 
 
+	public User_file getUser_file() {
+		return user_file;
+	}
+
+
+
+	public void setUser_file(User_file user_file) {
+		this.user_file = user_file;
+	}
+
+
+
 	public Long getId() {
 		return id;
 	}
