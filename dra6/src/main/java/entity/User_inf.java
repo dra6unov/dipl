@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +22,7 @@ public class User_inf {
 	private Long group_id;
 	private String email;
 	
-	@OneToMany(mappedBy="user_inf")
+	@OneToMany(mappedBy="user",fetch = FetchType.LAZY)
 	private List<User_file> files = new ArrayList<User_file>();
 	
 	public User_inf() {
@@ -33,6 +34,16 @@ public class User_inf {
 		this.auth_id = auth_id;
 		this.group_id = group_id;
 		this.email = email;
+	}
+	
+	
+
+	public List<User_file> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<User_file> files) {
+		this.files = files;
 	}
 
 	public Long getId() {

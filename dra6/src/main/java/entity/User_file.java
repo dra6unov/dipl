@@ -1,6 +1,8 @@
 package entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,22 +15,31 @@ public class User_file {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String file_name;
-	private Long user_id;
+	@Column(name="user_id")
+	private Long file;
 	
-	@ManyToOne
-	@JoinColumn(name="id", referencedColumnName="id", insertable=false, updatable=false)
-	private User_inf user_inf;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="id", insertable=false, updatable=false)
+	private User_inf user;
 	
 	public User_file(){
 		super();
 	}
 
-	public User_file(String file_name, Long user_id) {
+	public User_file(String file_name, Long userid) {
 		this.file_name = file_name;
-		this.user_id = user_id;
+		this.file = userid;
 	}
 
 	
+
+	public User_inf getUser_inf() {
+		return user;
+	}
+
+	public void setUser_inf(User_inf user_inf) {
+		this.user = user_inf;
+	}
 
 	public Long getId() {
 		return id;
@@ -47,16 +58,16 @@ public class User_file {
 	}
 
 	public Long getUser_id() {
-		return user_id;
+		return file;
 	}
 
 	public void setUser_id(Long user_id) {
-		this.user_id = user_id;
+		this.file = user_id;
 	}
 
 	@Override
 	public String toString() {
-		return "User_file [id=" + id + ", file_name=" + file_name + ", user_id=" + user_id + "]";
+		return "User_file [id=" + id + ", file_name=" + file_name + ", user_id=" + file + "]";
 	}
 	
 	

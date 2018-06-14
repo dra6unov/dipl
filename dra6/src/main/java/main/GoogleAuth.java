@@ -109,7 +109,7 @@ public class GoogleAuth {
 		return "home";
 	}*/
 
-	@RequestMapping("/")
+	/*@RequestMapping("/")
 	public static String home(HttpServletResponse response, HttpServletRequest request, Model model) {
 		HttpSession session = request.getSession();
 		//String name = session.getAttribute("user").toString();
